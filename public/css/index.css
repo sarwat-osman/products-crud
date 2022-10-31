@@ -1,14 +1,14 @@
 .title {
     text-align: center;
     color: white;
-    padding: 2%;
 }
 
 .background {
-    background: radial-gradient(circle, rgba(5,10,5,1) 18%, rgba(5,15,25,1) 72%, rgba(5,20,10,1) 100%);
+    background: radial-gradient(circle, rgba(5,10,55,1) 18%, rgba(5,15,125,1) 72%, rgba(5,20,10,1) 100%);
 }
 
 .list_card {	
+	margin: 2%;	
     border-color: #FFFFFF;
     border-radius: 20px;    
     border-width: 5px;

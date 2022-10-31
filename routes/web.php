@@ -14,8 +14,15 @@ use App\Http\Controllers\ProductController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Auth::routes();
+
+Route::group([
+    'middleware' => 'auth',
+], function() {	
+	Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+	Route::resource('products', ProductController::class);
+	Route::get('/', [ProductController::class, 'index']);
 });
 
-Route::resource('products', ProductController::class);
+
+

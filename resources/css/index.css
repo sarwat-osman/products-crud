@@ -1,0 +1,7 @@
+.title {
+	text-align: center;
+}
+
+.background {
+    background: radial-gradient(circle, rgba(5,5,0,1) 18%, rgba(5,15,25,1) 72%, rgba(59,20,34,1) 100%);
+}

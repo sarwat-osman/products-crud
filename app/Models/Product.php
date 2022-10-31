@@ -36,7 +36,7 @@ class Product extends Model
      */
     public function subcategory()
     {
-        return $this->belong(Subcategory::class, 'subcategory_id', 'id');
+        return $this->belongsTo(Subcategory::class, 'subcategory_id', 'id');
     }
 
     /**
@@ -44,7 +44,7 @@ class Product extends Model
      */
     public function category()
     {
-        return $this->hasManyThrough(
+        return $this->hasOneThrough(
             Category::class,    //Final model
             Subcategory::class,  //Intermediate Model
             'category_id', // Foreign key on the Subcategory table...

@@ -3,8 +3,12 @@
     color: white;
 }
 
+nav {
+	background-color: coral;
+}
+
 .background {
-    background: radial-gradient(circle, rgba(5,10,55,1) 18%, rgba(5,15,125,1) 72%, rgba(5,20,10,1) 100%);
+    background: radial-gradient(circle, rgba(15,10,35,1) 18%, rgba(35,15,25,1) 72%, rgba(5,20,10,1) 100%);
 }
 
 .list_card {	
@@ -13,4 +17,22 @@
     border-radius: 20px;    
     border-width: 5px;
     box-shadow: rgba(255, 250, 250, 0.35) 0px 25px 35px 0px;
+}
+
+#search_form {
+	float: right;
+}
+
+#filter_form {
+	text-align: center;
+}
+
+.filter_form_fields {
+	margin: 1%;
+}
+
+input, button, select, .btn {
+	height: 40px;
+	border-radius: 15px;
+	box-shadow: rgba(25, 20, 50, 0.35) 0px 5px 10px 0px;
 }

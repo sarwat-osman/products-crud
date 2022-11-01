@@ -18,17 +18,22 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::with('category', 'subcategory')
-            ->paginate(10);
+        try {
+            $products = Product::with('category', 'subcategory')
+                ->paginate(10);
 
-        $categories = Category::select('id', 'title')
-            ->get();
+            $categories = Category::select('id', 'title')
+                ->get();
 
-        $subcategories = Subcategory::select('id', 'title')
-            ->get();
-      
-        return view('index',compact('products', 'categories', 'subcategories'))
-            ->with('i', (request()->input('page', 1) - 1) * 5);
+            $subcategories = Subcategory::select('id', 'title')
+                ->get();
+          
+            return view('index',compact('products', 'categories', 'subcategories'))
+                ->with('i', (request()->input('page', 1) - 1) * 5);
+
+        } catch(Exception $exception) {
+            return view('index', ['error'=>'Failed to create Product!']);
+        }      
     }
 
     /**
@@ -120,9 +125,125 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $product->delete();
-       
-        return redirect()->route('products.index')
-            ->with('success','Product deleted successfully!');
+        try {
+            $product->delete();
+           
+            return redirect()->route('products.index')
+                ->with('success','Product deleted successfully!');
+        } catch(Exception $exception) {
+            return redirect()->route('products.index')
+                ->with('error','Failed to create Product!');
+        }      
+    }
+
+    public function getSubcategories(Request $request)
+    {
+        try {
+            $subcategories = Subcategory::where('category_id', $request->category_id)
+                ->get();
+
+            return response()->json([
+                "status" => true,
+                "data" => $subcategories
+            ]);
+        } catch(Exception $exception) {
+            return response()->json([
+                "status" => false,
+                "error" => $exception->getMessage()
+            ]);
+        }    
+    }
+
+    public function filter(Request $request)
+    {
+        try {
+            if($request->filled('category_id')) {
+                if($request->filled('subcategory_id')) {
+                    $filteredProducts = Product::where('subcategory_id', $request->subcategory_id)
+                        ->get();
+                }
+                else {                    
+                    $category = Category::where('id', $request->category_id)
+                        ->first();
+                    $filteredProducts = $category->products;
+                }
+            }
+
+            if($request->filled('min_price') && $request->filled('max_price')) {
+                $filteredProducts = $filteredProducts->where('price', '>=', $request->min_price)
+                    ->where('price', '<=', $request->max_price)
+                    ->all();
+            }
+
+            $tbodyHtml = "";
+            foreach ($filteredProducts as $product) {
+                $rowHtml = '<tr>
+                                <td>' . $product->id . '</td>
+                                <td>' . $product->title . '</td>
+                                <td>' . $product->description . '</td>
+                                <td>' . $product->category->title . '</td>
+                                <td>' . $product->subcategory->title . '</td>
+                                <td>' . $product->price . '</td>
+                                <td>
+                                    <form action="{{ route(\'products.destroy\',$product->id) }}" method="DELETE">
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                          
+                                        <button type="submit" class="btn btn-danger del_prod_btn" data-id="{{$product->id}}">X</button>
+                                    </form>
+                                </td>
+                            </tr>';
+                $tbodyHtml = $tbodyHtml . $rowHtml;
+            }
+
+            // return view('index')
+            //     ->with('success','Product created successfully!');
+            return response()->json([
+                "status" => true,
+                "data" => $tbodyHtml
+            ]);
+        } catch(Exception $exception) {
+            return response()->json([
+                "status" => false,
+                "error" => $exception->getMessage()
+            ]);
+        }    
+    }
+
+    public function search(Request $request)
+    {
+        try {
+            $searchedProducts = Product::where('title', 'LIKE','%'.$request->title.'%')
+                ->get();
+
+            $tbodyHtml = "";
+            foreach ($searchedProducts as $product) {
+                $rowHtml = '<tr>
+                                <td>' . $product->id . '</td>
+                                <td>' . $product->title . '</td>
+                                <td>' . $product->description . '</td>
+                                <td>' . $product->category->title . '</td>
+                                <td>' . $product->subcategory->title . '</td>
+                                <td>' . $product->price . '</td>
+                                <td>
+                                    <form action="{{ route(\'products.destroy\',$product->id) }}" method="DELETE">
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                          
+                                        <button type="submit" class="btn btn-danger del_prod_btn" data-id="{{$product->id}}">X</button>
+                                    </form>
+                                </td>
+                            </tr>';
+                $tbodyHtml = $tbodyHtml . $rowHtml;
+            }
+
+            return response()->json([
+                "status" => true,
+                "data" => $tbodyHtml
+            ]);
+        } catch(Exception $exception) {
+            return response()->json([
+                "status" => false,
+                "error" => $exception->getMessage()
+            ]);
+        }    
     }
 }

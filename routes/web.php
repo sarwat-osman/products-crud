@@ -21,6 +21,9 @@ Route::group([
 ], function() {	
 	Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 	Route::resource('products', ProductController::class);
+	Route::post('get-subcategories', [ProductController::class, 'getSubcategories']);
+	Route::post('/filter', [ProductController::class, 'filter'])->name('filter');
+	Route::post('/search', [ProductController::class, 'search'])->name('search');
 	Route::get('/', [ProductController::class, 'index']);
 });
 
